@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#000">
+<title>С днём рождения, Акберен</title>
+<meta property="og:title" content="Акберен, это тебе 💌">
+<meta property="og:description" content="Открой, тут небольшой сюрприз">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💗</text></svg>">
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Montserrat:wght@800&display=swap" rel="stylesheet">
+<style>
+/* ⚙️ Тексты и фото — в начале <script> внизу */
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;background:#000;color:#fff;font-family:system-ui,sans-serif;overflow:hidden;user-select:none;-webkit-user-select:none;touch-action:manipulation;overscroll-behavior:none}
+.scene{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:clamp(10px,3vh,22px);padding:max(16px,env(safe-area-inset-top)) max(16px,env(safe-area-inset-right)) max(16px,env(safe-area-inset-bottom)) max(16px,env(safe-area-inset-left));opacity:0;pointer-events:none;transition:opacity .9s}
+.scene.on{opacity:1;pointer-events:auto}
+canvas{position:fixed;inset:0;width:100%;height:100%}
+#stars{position:fixed;inset:0;opacity:0;transition:opacity 1.5s;background:radial-gradient(ellipse at bottom,#1b1430 0%,#05040b 70%)}
+#stars.on{opacity:1}
+#stars{overflow:hidden}
+#stars::before,#stars::after{content:"";position:absolute;inset:-25%;filter:blur(40px);animation:drift 16s ease-in-out infinite alternate}
+#stars::before{background:radial-gradient(circle at 30% 35%,#ff4fa338,transparent 40%),radial-gradient(circle at 75% 70%,#7a5cff38,transparent 42%)}
+#stars::after{background:radial-gradient(circle at 70% 25%,#3fd0ff26,transparent 38%),radial-gradient(circle at 25% 80%,#ff9a5c22,transparent 40%);animation-duration:22s;animation-direction:alternate-reverse}
+@keyframes drift{0%{transform:translate(0,0) rotate(0) scale(1)}50%{transform:translate(7%,-5%) rotate(12deg) scale(1.12)}100%{transform:translate(-6%,6%) rotate(-10deg) scale(1.05);filter:blur(40px) hue-rotate(40deg)}}
+.shoot{position:absolute;width:130px;height:2px;border-radius:2px;background:linear-gradient(90deg,#fff,#ffd1e6aa 30%,transparent);transform:rotate(-35deg);animation:shoot 1.3s ease-out forwards;filter:drop-shadow(0 0 4px #fff)}
+@keyframes shoot{from{opacity:0;translate:0 0}10%{opacity:1}to{opacity:0;translate:-320px 225px}}
+#stars i{position:absolute;width:2px;height:2px;border-radius:50%;background:#fff;animation:tw 3s infinite ease-in-out}
+@keyframes tw{50%{opacity:.15}}
+.floaty{position:fixed;bottom:-30px;font-size:14px;animation:up linear forwards;pointer-events:none}
+@keyframes up{to{transform:translate(var(--dx),-110vh) rotate(25deg);opacity:0}}
+
+#start{cursor:pointer}
+#start p{font-family:'Caveat',cursive;font-size:30px;color:#ffb3d6;text-align:center}
+#start .env{font-size:84px;animation:beat 1.4s infinite}
+@keyframes beat{0%,100%{transform:scale(1)}15%{transform:scale(1.15)}30%{transform:scale(1)}45%{transform:scale(1.1)}}
+
+/* Мишка */
+#bear{height:min(250px,31vh);aspect-ratio:220/252;cursor:pointer;overflow:visible;filter:drop-shadow(0 0 22px #ff7ab855);animation:bob 2.2s ease-in-out infinite;flex-shrink:0}
+@keyframes bob{50%{transform:translateY(-8px)}}
+#bear .eyes{animation:blink 4s infinite;transform-box:fill-box;transform-origin:center}
+@keyframes blink{0%,92%,100%{transform:scaleY(1)}95%{transform:scaleY(.1)}}
+#bear .wave{animation:wave 1.1s ease-in-out infinite;transform-origin:64px 168px}
+@keyframes wave{50%{transform:rotate(-30deg)}}
+#bear .flame{animation:flick .14s infinite alternate;transform-box:fill-box;transform-origin:bottom center}
+@keyframes flick{to{transform:scaleY(1.18) scaleX(.88)}}
+#bear .happy,#bear .smoke{display:none}
+#bear .cheek{opacity:.5;transition:opacity .4s}
+#bear.blown .flame,#bear.blown .eyes{display:none}
+#bear.blown .happy{display:inline}
+#bear.blown .cheek{opacity:1}
+#bear.blown .smoke{display:inline;transform-box:fill-box;transform-origin:center;animation:smoke 1.6s ease-out forwards}
+@keyframes smoke{from{opacity:.8}to{opacity:0;transform:translateY(-34px) scale(2)}}
+#bear.blown{animation:jump .45s ease-out 2,bob 2.2s ease-in-out .9s infinite}
+@keyframes jump{50%{transform:translateY(-26px)}}
+.pop{position:fixed;font-size:22px;z-index:20;pointer-events:none;animation:burst 1.4s ease-out forwards}
+@keyframes burst{to{transform:translate(var(--x),var(--y)) scale(1.4);opacity:0}}
+/* Шарики и флажки */
+#party>:not(.balloon):not(.bunting){position:relative;z-index:1}
+.balloon{position:absolute;bottom:-100px;width:44px;height:54px;border-radius:50% 50% 47% 47%;background:radial-gradient(circle at 32% 28%,#ffffffa0,transparent 38%),var(--c);opacity:.8;pointer-events:none;animation:rise linear infinite}
+.balloon::after{content:"";position:absolute;left:50%;top:100%;width:1px;height:46px;background:#ffffff70}
+@keyframes rise{50%{transform:translate(18px,-60vh)}to{transform:translate(-12px,-125vh)}}
+.bunting{position:absolute;top:env(safe-area-inset-top);left:0;right:0;display:flex;justify-content:space-between;padding:0 6px;pointer-events:none}
+.bunting span{width:min(9vw,36px);aspect-ratio:5/6;clip-path:polygon(0 0,100% 0,50% 100%);transform-origin:top;animation:swing 1.8s ease-in-out infinite alternate}
+@keyframes swing{from{transform:translateY(var(--y)) rotate(-8deg)}to{transform:translateY(var(--y)) rotate(8deg)}}
+.hb{font-family:'Montserrat',sans-serif;font-size:clamp(26px,8vw,44px);text-align:center;line-height:1.2}
+.hb span{display:inline-block;animation:hop 1.2s ease-in-out infinite}
+@keyframes hop{50%{transform:translateY(-8px)}}
+
+.card{height:min(220px,34vh);aspect-ratio:17/22;flex-shrink:0;background:#fff8fb;border-radius:14px;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;padding-bottom:28px;box-shadow:0 0 40px #ff7ab855;cursor:pointer;animation:float 3s ease-in-out infinite;transition:transform .6s,opacity .6s}
+.card b{font-size:46px;animation:beat 1.4s infinite}
+.card em{font-size:58px;font-style:normal;margin-top:-8px}
+.card.open{transform:scale(2.2) rotate(-4deg);opacity:0}
+@keyframes float{50%{transform:translateY(-10px)}}
+.hint{font-family:'Caveat',cursive;font-size:24px;color:#ffb3d6;opacity:.85}
+
+.note{width:min(92vw,520px);min-height:64px;background:#fffdf8;color:#b0446f;border-radius:10px;padding:12px 18px;font-family:'Caveat',cursive;font-size:clamp(20px,5.4vw,27px);text-align:center;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 30px #0008}
+.book{position:relative;width:min(92vw,520px,(100vh - 210px)*1.5);flex-shrink:0;aspect-ratio:3/2;perspective:1600px;cursor:pointer}
+.page{position:absolute;top:0;width:50%;height:100%;overflow:hidden;background:#fff;border:5px solid #fff}
+.page img{width:100%;height:100%;object-fit:cover;display:block}
+.L{left:0;border-radius:8px 0 0 8px}.R{right:0;border-radius:0 8px 8px 0}
+.book::after{content:"";position:absolute;left:50%;top:0;bottom:0;width:2px;margin-left:-1px;background:#0003;z-index:3}
+.flip{position:absolute;right:0;top:0;width:50%;height:100%;transform-origin:left center;transform-style:preserve-3d;z-index:2;display:none}
+.flip.go{transition:transform 1s cubic-bezier(.4,.1,.2,1);transform:rotateY(-180deg)}
+.face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;overflow:hidden;background:#fff;border:5px solid #fff}
+.face img{width:100%;height:100%;object-fit:cover;display:block}
+.back{transform:rotateY(180deg)}
+.pagetext{height:100%;display:flex;align-items:center;justify-content:center;text-align:center;padding:10px;font-family:'Caveat',cursive;font-size:clamp(20px,5vw,30px);color:#b0446f;background:#fff5f9}
+
+.heart{position:relative;width:min(92vw,480px,100vh - 140px);flex-shrink:0;aspect-ratio:1}
+.heart img{position:absolute;width:15%;aspect-ratio:3/4;object-fit:cover;border:3px solid #fff;border-radius:6px;box-shadow:0 0 14px #ff7ab899;left:42.5%;top:40%;opacity:0;transition:left 1.2s cubic-bezier(.3,1.3,.5,1),top 1.2s cubic-bezier(.3,1.3,.5,1),opacity .4s,transform 1.2s}
+.heart.beat{animation:hbeat 1.6s ease-in-out infinite}
+@keyframes hbeat{0%,100%{transform:scale(1)}20%{transform:scale(1.05)}40%{transform:scale(1)}}
+.final{font-family:'Caveat',cursive;font-size:clamp(28px,8vw,42px);color:#ffd1e6;text-align:center;opacity:0;transition:opacity 1.5s;text-shadow:0 0 18px #ff4fa3}
+.final.on{opacity:1}
+.hide{display:none!important}
+.conf{position:fixed;top:-12px;width:8px;height:12px;z-index:20;pointer-events:none;animation:fall linear forwards}
+@keyframes fall{to{transform:translate(var(--dx),110vh) rotate(720deg)}}
+#mute{position:fixed;top:max(12px,env(safe-area-inset-top));right:max(12px,env(safe-area-inset-right));z-index:30;width:40px;height:40px;border:0;border-radius:50%;background:#ffffff1f;font-size:18px;display:none}
+#lb{position:fixed;inset:0;z-index:25;background:#000d;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .3s}
+#lb.on{opacity:1;pointer-events:auto}
+#lb img{max-width:92vw;max-height:85vh;border:4px solid #fff;border-radius:10px}
+.heart img{cursor:pointer}
+.btn{font-family:'Caveat',cursive;font-size:22px;color:#ffb3d6;background:none;border:1px solid #ffb3d688;border-radius:99px;padding:6px 20px;opacity:0;pointer-events:none;transition:opacity 1.5s}
+.btn.on{opacity:1;pointer-events:auto}
+@media (prefers-reduced-motion:reduce){*{animation:none!important}}
+</style>
+</head>
+<body>
+<canvas id="rain"></canvas>
+<div id="stars"></div>
+<canvas id="fw"></canvas>
+
+<section class="scene on" id="start">
+  <div class="env">💌</div>
+  <p>Акберен, это тебе<br>нажми, чтобы открыть</p>
+</section>
+
+<section class="scene" id="party">
+  <div class="bunting" id="bunting"></div>
+  <svg id="bear" viewBox="0 -8 220 252" role="img" aria-label="Мишка с тортиком">
+    <ellipse cx="100" cy="190" rx="52" ry="44" fill="#d89a68"/>
+    <ellipse cx="100" cy="198" rx="32" ry="28" fill="#f6dcc3"/>
+    <ellipse cx="72" cy="232" rx="17" ry="10" fill="#c98b5b"/><ellipse cx="128" cy="232" rx="17" ry="10" fill="#c98b5b"/>
+    <g class="wave"><ellipse cx="44" cy="146" rx="13" ry="26" fill="#c98b5b" transform="rotate(-28 44 146)"/></g>
+    <circle cx="52" cy="48" r="22" fill="#c98b5b"/><circle cx="52" cy="48" r="11" fill="#f4c9a8"/>
+    <circle cx="148" cy="48" r="22" fill="#c98b5b"/><circle cx="148" cy="48" r="11" fill="#f4c9a8"/>
+    <circle cx="100" cy="90" r="55" fill="#d89a68"/>
+    <g class="eyes"><ellipse cx="78" cy="84" rx="6.5" ry="8" fill="#2b1a12"/><ellipse cx="122" cy="84" rx="6.5" ry="8" fill="#2b1a12"/><circle cx="80" cy="81" r="2.3" fill="#fff"/><circle cx="124" cy="81" r="2.3" fill="#fff"/></g>
+    <path class="happy" d="M71 87 Q78 77 85 87 M115 87 Q122 77 129 87" stroke="#2b1a12" stroke-width="4" fill="none" stroke-linecap="round"/>
+    <ellipse class="cheek" cx="64" cy="104" rx="11" ry="7" fill="#ff8fb0"/><ellipse class="cheek" cx="136" cy="104" rx="11" ry="7" fill="#ff8fb0"/>
+    <ellipse cx="100" cy="110" rx="25" ry="19" fill="#f6dcc3"/>
+    <ellipse cx="100" cy="101" rx="8" ry="6" fill="#4a2c1d"/>
+    <path d="M92 112 Q100 120 108 112" stroke="#4a2c1d" stroke-width="3" fill="none" stroke-linecap="round"/>
+    <polygon points="82,40 120,34 106,0" fill="#ff8fc1"/><circle cx="95" cy="27" r="3" fill="#fff"/><circle cx="108" cy="17" r="2.5" fill="#fff6a8"/><circle cx="106" cy="0" r="7" fill="#fff6a8"/>
+    <ellipse cx="150" cy="214" rx="42" ry="6" fill="#fff"/>
+    <rect x="118" y="180" width="64" height="33" rx="6" fill="#ffc2da"/>
+    <path d="M118 190 q0-10 8-10 h48 q8 0 8 10 v3 q-5 6-10 0 q-5 6-10 0 q-5 6-10 0 q-5 6-10 0 q-5 6-10 0 q-5 6-14 0z" fill="#fff"/>
+    <circle cx="130" cy="203" r="2" fill="#7ad0ff"/><circle cx="148" cy="206" r="2" fill="#ffd34d"/><circle cx="166" cy="202" r="2" fill="#9be38f"/>
+    <rect x="147" y="156" width="6" height="25" rx="2" fill="#8fd3ff"/>
+    <g class="flame"><path d="M150 138 q9 11 0 18 q-9 -7 0 -18z" fill="#ffad2e"/><ellipse cx="150" cy="151" rx="2.2" ry="3.4" fill="#fff4b8"/></g>
+    <circle class="smoke" cx="150" cy="148" r="5" fill="#d9d9e8"/>
+    <ellipse cx="186" cy="198" rx="11" ry="14" fill="#c98b5b"/>
+  </svg>
+  <div class="hb" id="hb"></div>
+  <div class="card hide" id="card1"><b>❤️</b><em>🤲</em></div>
+  <p class="hint" id="partyHint">загадай желание и задуй свечку — нажми на мишку 🕯️</p>
+</section>
+
+<section class="scene" id="bookScene">
+  <div class="note" id="note"></div>
+  <div class="book" id="book">
+    <div class="page L" id="pL"></div>
+    <div class="page R" id="pR"></div>
+    <div class="flip" id="flip"><div class="face" id="fF"></div><div class="face back" id="fB"></div></div>
+  </div>
+  <p class="hint" id="bookHint">листай →</p>
+</section>
+
+<section class="scene" id="card2Scene">
+  <div class="card" id="card2"><b>❤️</b><em>🤲</em></div>
+  <p class="hint">и ещё кое-что…</p>
+</section>
+
+<section class="scene" id="heartScene">
+  <div class="heart" id="heart"></div>
+  <p class="final" id="final"></p>
+  <button class="btn" id="replay" onclick="location.reload()">посмотреть ещё раз ↺</button>
+</section>
+
+<button id="mute" aria-label="Звук">🔊</button>
+<div id="lb"><img alt=""></div>
+
+<script>
+// ⚙️ НАСТРОЙКИ
+const WORDS  = ["3", "2", "1", "С ДНЁМ", "РОЖДЕНИЯ", "АКБЕРЕН", "♥"];
+const PHOTOS = [1,2,3,4,5,6,7].map(n => `photos/${n}.jpg`);
+// Развороты книги: что слева / справа (номер фото из PHOTOS или текст) + записка сверху
+const SPREADS = [
+  { l: 0, r: 1, note: "С днём рождения, Акберен 🤍" },
+  { l: 2, r: 3, note: "Пусть этот год будет таким же красивым, как ты" },
+  { l: 4, r: 5, note: "Улыбайся почаще — тебе это очень идёт ✨" },
+  { l: 6, r: "А дальше — только лучше 💗", note: "Пусть все мечты сбываются, а рядом всегда будут любимые люди" },
+];
+const FINAL = "С днём рождения, Акберен! 💗";
+// ─────────────────────────────────────────
+
+const $ = id => document.getElementById(id);
+const wait = ms => new Promise(r => setTimeout(r, ms));
+const show = id => { document.querySelectorAll('.scene').forEach(s => s.classList.toggle('on', s.id === id)); };
+const tapOnce = el => new Promise(r => el.addEventListener('click', e => { navigator.vibrate?.(25); r(e); }, { once: true }));
+
+/* ── Музыка: Happy Birthday музыкальной шкатулкой, без файлов ── */
+let ac, master, muted = false;
+const F = { G4: 392, A4: 440, B4: 493.88, C5: 523.25, D5: 587.33, E5: 659.25, F5: 698.46, G5: 783.99 };
+const MEL = 'G4 .75 G4 .25 A4 1 G4 1 C5 1 B4 2 G4 .75 G4 .25 A4 1 G4 1 D5 1 C5 2 G4 .75 G4 .25 G5 1 E5 1 C5 1 B4 1 A4 2 F5 .75 F5 .25 E5 1 C5 1 D5 1 C5 3'.split(' ');
+function note(f, t) {
+  for (const [m, v, type] of [[1, 1, 'sine'], [2, .3, 'triangle']]) {
+    const o = ac.createOscillator(), g = ac.createGain();
+    o.type = type; o.frequency.value = f * m;
+    g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(v, t + .01); g.gain.exponentialRampToValueAtTime(.001, t + 1.4);
+    o.connect(g).connect(master); o.start(t); o.stop(t + 1.5);
+  }
+}
+function melody() {
+  let t = ac.currentTime + .1;
+  for (let i = 0; i < MEL.length; i += 2) { note(F[MEL[i]], t); t += MEL[i + 1] * .5; }
+  setTimeout(melody, (t - ac.currentTime + 2) * 1000);
+}
+function startMusic() { // вызывается прямо в обработчике тапа — иначе iOS не даст звук
+  try {
+    // iPhone: чтобы музыка играла даже при беззвучном режиме (переключатель сбоку)
+    if (navigator.audioSession) navigator.audioSession.type = 'playback'; // iOS 17+
+    const wav = new Uint8Array(44 + 800), v = new DataView(wav.buffer), s = (o, t) => [...t].forEach((c, i) => wav[o + i] = c.charCodeAt(0));
+    s(0, 'RIFF'); v.setUint32(4, 36 + 800, true); s(8, 'WAVEfmt '); v.setUint32(16, 16, true); v.setUint16(20, 1, true); v.setUint16(22, 1, true);
+    v.setUint32(24, 8000, true); v.setUint32(28, 8000, true); v.setUint16(32, 1, true); v.setUint16(34, 8, true); s(36, 'data'); v.setUint32(40, 800, true);
+    wav.fill(128, 44); // тишина
+    const silent = new Audio(URL.createObjectURL(new Blob([wav], { type: 'audio/wav' })));
+    silent.loop = true; silent.setAttribute('playsinline', ''); silent.play().catch(() => {}); // старые iOS: <audio> переключает сессию в «playback»
+    ac = new (window.AudioContext || window.webkitAudioContext)();
+    master = ac.createGain(); master.gain.value = .18; master.connect(ac.destination);
+    ac.resume(); melody(); $('mute').style.display = 'block';
+  } catch (e) {}
+}
+document.addEventListener('visibilitychange', () => { if (ac && !document.hidden) ac.resume(); });
+$('mute').onclick =() => { muted = !muted; master.gain.value = muted ? 0 : .18; $('mute').textContent = muted ? '🔇' : '🔊'; };
+
+function confetti(n = 90) {
+  for (let i = 0; i < n; i++) {
+    const c = document.createElement('div'); c.className = 'conf';
+    c.style.cssText = `left:${Math.random() * 100}%;background:hsl(${Math.random() * 360},90%,70%);--dx:${(Math.random() - .5) * 200}px;animation-duration:${2.5 + Math.random() * 2.5}s;animation-delay:${Math.random() * .6}s;border-radius:${Math.random() > .5 ? '50%' : '2px'}`;
+    document.body.appendChild(c); setTimeout(() => c.remove(), 6000);
+  }
+}
+
+function burst(el) {
+  const r = el.getBoundingClientRect();
+  for (let i = 0; i < 14; i++) {
+    const h = document.createElement('div'), a = Math.random() * 2 * Math.PI, d = 80 + Math.random() * 90;
+    h.className = 'pop'; h.textContent = ['💗', '💖', '✨', '🤍', '💕'][i % 5];
+    h.style.cssText = `left:${r.x + r.width / 2 - 11}px;top:${r.y + r.height / 2 - 11}px;--x:${Math.cos(a) * d}px;--y:${Math.sin(a) * d}px`;
+    document.body.appendChild(h); setTimeout(() => h.remove(), 1500);
+  }
+}
+
+/* Шарики и флажки на сцене с мишкой */
+['#ffb3c7', '#ffd59e', '#b8e0ff', '#d5c2ff', '#ffc2e8', '#b9f0d0', '#ff9ec0'].forEach((c, i) => {
+  const b = document.createElement('div'); b.className = 'balloon';
+  b.style.cssText = `--c:${c};left:${5 + i * 13}%;animation-duration:${9 + (i % 3) * 2.5}s;animation-delay:-${i * 1.7}s;width:${34 + (i % 3) * 8}px;height:${42 + (i % 3) * 10}px`;
+  $('party').prepend(b);
+});
+for (let i = 0, n = 9; i < n; i++) {
+  const f = document.createElement('span');
+  f.style.cssText = `background:hsl(${i * 40},85%,78%);--y:${Math.sin(Math.PI * i / (n - 1)) * 18}px;animation-delay:-${i * .3}s`;
+  $('bunting').appendChild(f);
+}
+
+/* Свайп по книжке = тап; фото из сердца — на весь экран */
+let sx = 0;
+$('book').addEventListener('touchstart', e => sx = e.touches[0].clientX, { passive: true });
+$('book').addEventListener('touchend', e => { if (Math.abs(e.changedTouches[0].clientX - sx) > 30) $('book').click(); });
+$('heart').addEventListener('click', e => { if (e.target.tagName === 'IMG') { $('lb').querySelector('img').src = e.target.src; $('lb').classList.add('on'); } });
+$('lb').onclick = () => $('lb').classList.remove('on');
+PHOTOS.forEach(src => (new Image).src = src); // preload
+
+/* ── Матричный дождь + слова из точек ── */
+const cv = $('rain'), cx = cv.getContext('2d');
+let W, H, cols, drops, mask = [];
+const CH = 'ｱｲｳｴｵｶｷｸｹｺ01♥АКБЕРЕН', FS = 14, STEP = 5;
+function resize() {
+  const d = Math.min(devicePixelRatio || 1, 2);
+  W = innerWidth; H = innerHeight; cv.width = W * d; cv.height = H * d; cx.setTransform(d, 0, 0, d, 0, 0);
+  cols = Math.ceil(W / FS); drops = Array.from({ length: cols }, () => Math.random() * -H / FS);
+}
+resize(); addEventListener('resize', resize);
+
+function setWord(word) {
+  if (!word) return mask = [];
+  const gw = Math.floor(W / STEP), gh = Math.floor(H / STEP), o = document.createElement('canvas');
+  o.width = gw; o.height = gh;
+  const g = o.getContext('2d');
+  let f = gh * 0.22;
+  g.font = `800 ${f}px Montserrat, sans-serif`;
+  const w = g.measureText(word).width;
+  if (w > gw * 0.88) f *= gw * 0.88 / w;
+  g.font = `800 ${f}px Montserrat, sans-serif`;
+  g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText(word, gw / 2, gh / 2);
+  const px = g.getImageData(0, 0, gw, gh).data; mask = [];
+  for (let y = 0; y < gh; y++) for (let x = 0; x < gw; x++) if (px[(y * gw + x) * 4 + 3] > 120) mask.push([x * STEP, y * STEP]);
+}
+
+let raining = true;
+(function frame() {
+  if (!raining) return;
+  cx.fillStyle = 'rgba(0,0,0,.14)'; cx.fillRect(0, 0, W, H);
+  cx.font = FS + 'px monospace';
+  for (let i = 0; i < cols; i++) {
+    cx.fillStyle = Math.random() > .97 ? '#ffd1e6' : '#ff3d9a';
+    cx.fillText(CH[Math.random() * CH.length | 0], i * FS, drops[i] * FS);
+    if (drops[i] * FS > H && Math.random() > .975) drops[i] = 0;
+    drops[i] += .55;
+  }
+  for (const [x, y] of mask) { cx.fillStyle = Math.random() > .3 ? '#ff8cc6' : '#fff0f7'; cx.fillRect(x, y, STEP - 1.5, STEP - 1.5); }
+  requestAnimationFrame(frame);
+})();
+
+/* ── Звёзды и сердечки ── */
+function stars() {
+  const s = $('stars');
+  for (let i = 0; i < 120; i++) {
+    const e = document.createElement('i');
+    e.style.cssText = `left:${Math.random() * 100}%;top:${Math.random() * 100}%;animation-delay:${Math.random() * 3}s;transform:scale(${.5 + Math.random()})`;
+    s.appendChild(e);
+  }
+  s.classList.add('on');
+  fireworks();
+  (function shoot() { // падающие звёзды
+    const e = document.createElement('div'); e.className = 'shoot';
+    e.style.left = 30 + Math.random() * 70 + '%'; e.style.top = Math.random() * 45 + '%';
+    s.appendChild(e); setTimeout(() => e.remove(), 1400);
+    setTimeout(shoot, 2500 + Math.random() * 3500);
+  })();
+  setInterval(() => {
+    const h = document.createElement('div');
+    h.className = 'floaty'; h.textContent = ['❤️', '💗', '🤍', '✨'][Math.random() * 4 | 0];
+    h.style.cssText = `left:${Math.random() * 100}%;--dx:${(Math.random() - .5) * 120}px;animation-duration:${6 + Math.random() * 5}s;font-size:${10 + Math.random() * 12}px`;
+    document.body.appendChild(h); setTimeout(() => h.remove(), 11000);
+  }, 700);
+}
+
+/* ── Салюты на заднем фоне ── */
+function fireworks() {
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const c = $('fw'), g = c.getContext('2d');
+  let rockets = [], parts = [];
+  const fit = () => { const d = Math.min(devicePixelRatio || 1, 2); c.width = innerWidth * d; c.height = innerHeight * d; g.setTransform(d, 0, 0, d, 0, 0); };
+  fit(); addEventListener('resize', fit);
+  setInterval(() => {
+    if (document.hidden) return;
+    rockets.push({ x: innerWidth * (.12 + Math.random() * .76), y: innerHeight, vy: -(innerHeight * .011 + Math.random() * 3),
+                   ty: innerHeight * (.1 + Math.random() * .35), h: Math.random() * 360, heart: Math.random() < .33 });
+  }, 1100);
+  (function frame() {
+    g.globalCompositeOperation = 'destination-out'; g.fillStyle = 'rgba(0,0,0,.2)'; g.fillRect(0, 0, innerWidth, innerHeight); // шлейф, звёзды видно сквозь
+    g.globalCompositeOperation = 'lighter';
+    rockets = rockets.filter(r => {
+      r.y += r.vy; g.fillStyle = `hsl(${r.h},100%,85%)`; g.fillRect(r.x - 1, r.y, 2, 7);
+      if (r.y > r.ty) return true;
+      const n = r.heart ? 70 : 50 + Math.random() * 30 | 0;
+      for (let i = 0; i < n; i++) {
+        const a = i / n * 2 * Math.PI;
+        const [vx, vy] = r.heart
+          ? [16 * Math.sin(a) ** 3 * .2, -(13 * Math.cos(a) - 5 * Math.cos(2 * a) - 2 * Math.cos(3 * a) - Math.cos(4 * a)) * .2]
+          : [Math.cos(a) * (1.5 + Math.random() * 2.5), Math.sin(a) * (1.5 + Math.random() * 2.5)];
+        parts.push({ x: r.x, y: r.y, vx, vy, l: 1, h: r.heart ? 330 + Math.random() * 20 : r.h + Math.random() * 40 - 20 });
+      }
+      return false;
+    });
+    parts = parts.filter(p => {
+      p.x += p.vx; p.y += p.vy; p.vx *= .975; p.vy = p.vy * .975 + .035; p.l -= .011;
+      g.fillStyle = `hsla(${p.h},100%,70%,${p.l})`; g.beginPath(); g.arc(p.x, p.y, 1.8, 0, 7); g.fill();
+      return p.l > 0;
+    });
+    requestAnimationFrame(frame);
+  })();
+}
+
+/* ── Книга ── */
+const pageHTML = v => typeof v === 'number' ? `<img src="${PHOTOS[v]}" alt="">` : `<div class="pagetext">${v}</div>`;
+async function typeNote(text) {
+  const n = $('note'); n.textContent = '';
+  for (const ch of text) { n.textContent += ch; await wait(40); }
+}
+async function book() {
+  show('bookScene');
+  let i = 0;
+  $('pL').innerHTML = pageHTML(SPREADS[0].l); $('pR').innerHTML = pageHTML(SPREADS[0].r);
+  typeNote(SPREADS[0].note);
+  while (i < SPREADS.length - 1) {
+    await tapOnce($('book'));
+    const cur = SPREADS[i], nxt = SPREADS[++i], fl = $('flip');
+    $('fF').innerHTML = pageHTML(cur.r); $('fB').innerHTML = pageHTML(nxt.l); $('pR').innerHTML = pageHTML(nxt.r);
+    fl.className = 'flip'; fl.style.display = 'block'; fl.offsetWidth; fl.classList.add('go');
+    typeNote(nxt.note);
+    await wait(1000);
+    $('pL').innerHTML = pageHTML(nxt.l); fl.style.display = 'none'; fl.className = 'flip';
+  }
+  $('bookHint').textContent = 'нажми ещё раз ♥';
+  await tapOnce($('book'));
+}
+
+/* ── Сердце из фото ── */
+async function heart() {
+  show('heartScene');
+  const box = $('heart'), N = 26;
+  const imgs = [];
+  for (let k = 0; k < N; k++) {
+    const im = new Image(); im.src = PHOTOS[k % PHOTOS.length]; box.appendChild(im); imgs.push(im);
+  }
+  await wait(300);
+  imgs.forEach((im, k) => {
+    const t = (k / N) * 2 * Math.PI;
+    const x = 16 * Math.sin(t) ** 3, y = -(13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t));
+    setTimeout(() => {
+      im.style.opacity = 1;
+      im.style.left = (42.5 + x * 2.6) + '%'; im.style.top = (36 + y * 2.6) + '%';
+      im.style.transform = `rotate(${(Math.random() - .5) * 20}deg)`;
+    }, k * 120);
+  });
+  await wait(N * 120 + 1300);
+  box.classList.add('beat'); confetti(120);
+  $('final').textContent = FINAL; $('final').classList.add('on');
+  await wait(2500); $('replay').classList.add('on');
+}
+
+/* ── Сценарий ── */
+(async () => {
+  $('start').addEventListener('click', startMusic, { once: true });
+  await tapOnce($('start')); // на iOS клик по body не ловится
+  show(null);
+  await document.fonts.ready;
+  await wait(800);
+  for (const w of WORDS) { setWord(w); await wait(/\d/.test(w) ? 900 : 1400); setWord(''); await wait(250); }
+  await wait(600);
+  cv.style.transition = 'opacity 1.2s'; cv.style.opacity = 0;
+  stars(); await wait(1200); raining = false;
+  $('hb').innerHTML = [...'Happy Birthday!'].map((c, i) =>
+    `<span style="animation-delay:${i * .08}s;color:hsl(${i * 28},90%,72%)">${c === ' ' ? '&nbsp;' : c}</span>`).join('');
+  show('party');
+  await tapOnce($('bear'));
+  $('bear').classList.add('blown'); burst($('bear')); confetti();
+  $('partyHint').textContent = 'желание загадано ✨';
+  await wait(1800);
+  $('card1').classList.remove('hide'); $('partyHint').textContent = 'а теперь открой открытку 💌';
+  await tapOnce($('card1')); $('card1').classList.add('open'); await wait(600);
+  await book();
+  show('card2Scene');
+  await tapOnce($('card2')); $('card2').classList.add('open'); await wait(600);
+  await heart();
+})();
+</script>
+</body>
+</html>
